@@ -1,5 +1,3 @@
--- Main.hs
-
 type Coordenada = (Int, Int)
 type Bosque = [[Int]]
 
@@ -47,16 +45,26 @@ resolverBosque :: Bosque -> Int -> ([Coordenada], Int)
 resolverBosque bosque energiaInicial =
   let inicio = (0,0)
       fin = (length bosque - 1, length (head bosque) - 1)
-      inicial = Estado inicio (ajustarEnergia bosque inicio False energiaInicial) [inicio]
+      energiaInicialReal = ajustarEnergia bosque inicio False energiaInicial
+      inicial = Estado inicio energiaInicialReal [inicio]
       caminosValidos = explorar bosque fin fin [inicial]
-      mejor = foldl1 (\a b -> if energia a > energia b then a else b) caminosValidos
+      mejor = if null caminosValidos 
+                 then Estado inicio 0 [inicio] -- sin caminos válidos
+                 else foldl1 (\a b -> if energia a > energia b then a else b) caminosValidos
   in (camino mejor, energia mejor)
 
 -- Main para ejecutar la app
 main :: IO ()
 main = do
-  let bosque = [[2,-3,1,0,2,3],[-5,4,-2,1,0,-4],[1,3,0,-3,2,2],[2,-1,4,0,-5,1],[0,2,-3,3,4,-1],[1,0,2,-2,1,5]]
+  putStrLn "Iniciando el bosque mágico..."
+  let bosque = [[2,-3,1,0,2,3],
+                [-5,4,-2,1,0,-4],
+                [1,3,0,-3,2,2],
+                [2,-1,4,0,-5,1],
+                [0,2,-3,3,4,-1],
+                [1,0,2,-2,1,5]]
   let energiaInicial = 12
   let (caminoFinal, energiaFinal) = resolverBosque bosque energiaInicial
+  putStrLn "¡Cálculo completado!"
   putStrLn $ "Camino: " ++ show caminoFinal
   putStrLn $ "Energía final: " ++ show energiaFinal

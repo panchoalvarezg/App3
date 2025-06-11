@@ -23,7 +23,6 @@ ajustarEnergia bosque c esDiagonal energiaActual =
       penalizacionDiagonal = if esDiagonal then 2 else 0
   in base - penalizacionTrampa - penalizacionDiagonal
 
--- MOVIMIENTOS LIMITADOS: solo derecha, abajo, y diagonal abajo-derecha
 movimientos :: Bosque -> Estado -> [Estado]
 movimientos bosque (Estado (i,j) e caminoAnt) = 
   let candidatos = [ ((i, j+1), False), ((i+1, j), False), ((i+1, j+1), True) ]
@@ -42,22 +41,23 @@ explorar bosque fin destino (x:xs)
 
 main :: IO ()
 main = do
-  putStrLn "Iniciando el bosque mágico... (versión optimizada)"
-  
-  let bosque = [[2, -1, 3],
-                [0, 4, -2],
-                [1, -3, 5]]
-  let energiaInicial = 10
+  putStrLn "Ingrese energía inicial:"
+  energiaStr <- getLine
+  let energiaInicial = read energiaStr :: Int
+
+  putStrLn "Ingrese la matriz de runas (formato: [[a,b],[c,d],...]):"
+  matrizStr <- getLine
+  let bosque = read matrizStr :: [[Int]]
 
   let inicio = (0,0)
   let energiaInicialReal = ajustarEnergia bosque inicio False energiaInicial
-  putStrLn $ "Energía inicial real tras celda (0,0): " ++ show energiaInicialReal
+  putStrLn $ "Energía inicial tras celda (0,0): " ++ show energiaInicialReal
 
   let inicial = Estado inicio energiaInicialReal [inicio]
   let fin = (length bosque - 1, length (head bosque) - 1)
 
   let caminosValidos = explorar bosque fin fin [inicial]
-  putStrLn $ "Cantidad de caminos válidos encontrados: " ++ show (length caminosValidos)
+  putStrLn $ "Caminos válidos encontrados: " ++ show (length caminosValidos)
 
   let (caminoFinal, energiaFinal) =
         if null caminosValidos
@@ -65,6 +65,5 @@ main = do
            else let mejor = foldl1 (\a b -> if energia a > energia b then a else b) caminosValidos
                 in (camino mejor, energia mejor)
 
-  putStrLn "¡Cálculo completado!"
-  putStrLn $ "Camino: " ++ show caminoFinal
+  putStrLn $ "Camino óptimo: " ++ show caminoFinal
   putStrLn $ "Energía final: " ++ show energiaFinal

@@ -14,7 +14,7 @@ Este proyecto en Haskell implementa una simulación funcional del recorrido ópt
   
 ## Cómo ejecutar
 
-Requisitos: Instala GHC y usar Mingw64 para compilar y ejecutar la App3
+Requisitos: Instala GHC y usar GitBash(Mingw64) para compilar y ejecutar la App3
 
 1. Compila el proyecto:
    ghc Main.hs -o bosque.exe
